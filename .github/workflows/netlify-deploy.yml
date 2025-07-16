@@ -5,8 +5,11 @@ jobs:
     name: 'Deploy to Netlify'
     runs-on: ubuntu-latest
     steps:
-      - uses: jsmrcaga/action-netlify-deploy@v2.0.0
+      - uses: actions/checkout@v4
+      - uses: jsmrcaga/action-netlify-deploy@v2.4.0
         with:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: 5c6bd580-e747-4d7d-8a65-00e20e72f36c
+          NETLIFY_SITE_ID: '5c6bd580-e747-4d7d-8a65-00e20e72f36c'
           NETLIFY_DEPLOY_TO_PROD: true
+          install_command: 'yarn install'
+          build_command: 'yarn run build'
