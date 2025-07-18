@@ -20,7 +20,8 @@ const LogInForm = () => {
   const onSubmit: SubmitHandler<IFormInputs> = (data) => {
     console.log(data);
     // navigate('/');
-  };
+  
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
