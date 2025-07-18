@@ -21,9 +21,7 @@ const SignUpForm = () => {
 
 	const onSubmit: SubmitHandler<IFormInputs> = (data) => {
 		console.log(data);
-		navigate('/');
-
-        
+		// navigate('/');
 	};
 
 	return (
