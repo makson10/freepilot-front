@@ -19,6 +19,8 @@ const LogInForm = () => {
 
 	const onSubmit: SubmitHandler<IFormInputs> = (data) => {
 		console.log(data);
+
+            
 		navigate('/');
 	};
 
