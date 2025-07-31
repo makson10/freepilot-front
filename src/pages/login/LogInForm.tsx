@@ -1,29 +1,33 @@
 import { useNavigate } from 'react-router';
 import useYupValidationResolver from '@/utils/yupValidationResolver';
 import logInSchema from '@/utils/validationSchemas/logInSchema';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-
-interface IFormInputs {
-	email: string;
-	password: string;
-}
+import { useForm } from 'react-hook-form';
+import { useLogInMutation } from '@/store/api/authApi';
+import type { LogInUser } from '@/types/user.types';
+import { useEffect } from 'react';
+import { setAccessToken } from '@/utils/cookie';
 
 const LogInForm = () => {
+	const [logIn, { data: result, isLoading, status }] = useLogInMutation();
 	const navigate = useNavigate();
 	const resolver = useYupValidationResolver(logInSchema);
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<IFormInputs>({ resolver });
+	} = useForm<LogInUser>({ resolver });
 
-	const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-		console.log(data);
-		navigate('/');
-	};
+	useEffect(() => {
+		if (status === 'fulfilled') {
+			setAccessToken(result['access_token']);
+			navigate('/');
+		}
+	}, [navigate, result, status]);
+
+	if (isLoading) return <div>Loading...</div>;
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+		<form onSubmit={handleSubmit(logIn)} className="flex flex-col gap-4">
 			<div>
 				<label className="block text-[var(--main-color)] font-medium mb-1">
 					Email

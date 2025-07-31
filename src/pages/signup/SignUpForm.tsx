@@ -1,31 +1,33 @@
 import useYupValidationResolver from '@/utils/yupValidationResolver';
 import signUpSchema from '@/utils/validationSchemas/signUpSchema';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-
-interface IFormInputs {
-	fullName: string;
-	role: 'freelancer' | 'customer';
-	email: string;
-	password: string;
-}
+import { useSignUpMutation } from '@/store/api/authApi';
+import type { SignUpUser } from '@/types/user.types';
+import { useEffect } from 'react';
+import { setAccessToken } from '@/utils/cookie';
 
 const SignUpForm = () => {
+	const [signUp, { data: result, isLoading, status }] = useSignUpMutation();
 	const navigate = useNavigate();
 	const resolver = useYupValidationResolver(signUpSchema);
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<IFormInputs>({ resolver });
+	} = useForm<SignUpUser>({ resolver });
 
-	const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-		console.log(data);
-		navigate('/');
-	};
+	useEffect(() => {
+		if (status === 'fulfilled') {
+			setAccessToken(result['access_token']);
+			navigate('/');
+		}
+	}, [navigate, result, status]);
+
+	if (isLoading) return <div>Loading...</div>;
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+		<form onSubmit={handleSubmit(signUp)} className="flex flex-col gap-4">
 			<div>
 				<label className="block text-[var(--main-color)] font-medium mb-1">
 					Full name
